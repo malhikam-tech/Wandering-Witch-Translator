@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wandering Witch Formal Alphabet Translator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Memuat font custom dari file yang diunggah */
+        @font-face {
+            font-family: 'WanderingWitchFormal';
+            src: url('WanderingWitchFormal-Regular.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        .majo-font {
+            font-family: 'WanderingWitchFormal', cursive;
+        }
+
+        .keyboard-key {
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+
+        .keyboard-key:active {
+            transform: scale(0.9);
+            background-color: #4b5563;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 min-h-screen font-sans text-stone-800">
+
+    <div class="max-w-4xl mx-auto p-4 sm:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl sm:text-4xl font-bold text-stone-700 mb-2">Wandering Witch Translator</h1>
+            <p class="text-stone-500 italic">Majo Alphabet - Latin Translator</p>
+        </header>
+
+        <!-- Mode Selector -->
+        <div class="flex justify-center mb-6 space-x-2">
+            <button id="mode-latin-to-majo" onclick="setMode('L2M')" class="px-4 py-2 rounded-full bg-stone-700 text-white shadow-md transition-all">Latin → Majo</button>
+            <button id="mode-majo-to-latin" onclick="setMode('M2L')" class="px-4 py-2 rounded-full bg-white text-stone-700 border border-stone-300 shadow-sm transition-all">Majo → Latin</button>
+        </div>
+
+        <!-- Translation Area -->
+        <div class="grid grid-cols-1 gap-6">
+            
+            <!-- Input Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-6 border border-stone-200">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="input-label" class="text-sm font-semibold text-stone-400 uppercase tracking-widest">Input Latin</span>
+                    <button onclick="clearAll()" class="text-xs text-red-400 hover:text-red-600 transition-colors">Hapus Semua</button>
+                </div>
+                <textarea id="input-text" 
+                          class="w-full h-32 p-4 text-xl border-none focus:ring-0 resize-none placeholder-stone-300 transition-all"
+                          placeholder="Ketik di sini..."></textarea>
+            </div>
+
+            <!-- Output Card -->
+            <div class="bg-stone-800 rounded-2xl shadow-xl p-6 text-white">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="output-label" class="text-sm font-semibold text-stone-500 uppercase tracking-widest">Hasil Majo</span>
+                    <button onclick="copyOutput()" class="text-xs bg-stone-700 hover:bg-stone-600 px-3 py-1 rounded transition-colors">Salin</button>
+                </div>
+                <div id="output-text" class="w-full min-h-[128px] p-4 text-3xl break-words whitespace-pre-wrap"></div>
+            </div>
+        </div>
+
+        <!-- Majo Virtual Keyboard (Hanya muncul di mode Majo -> Latin) -->
+        <div id="majo-keyboard" class="mt-8 bg-stone-200 p-4 rounded-3xl shadow-inner hidden">
+            <p class="text-center text-xs text-stone-500 mb-4 font-bold uppercase tracking-tighter">Majo Virtual Keyboard</p>
+            <div class="grid grid-cols-10 gap-2 max-w-2xl mx-auto">
+                <!-- Baris 1: Angka -->
+                <script>
+                    const keys = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM".split("");
+                    keys.forEach(key => {
+                        document.write(`
+                            <button onclick="pressKey('${key}')" class="keyboard-key majo-font bg-white rounded-lg p-2 sm:p-3 text-xl sm:text-2xl shadow-sm hover:shadow-md border-b-4 border-stone-300">
+                                ${key}
+                                <span class="block text-[8px] text-stone-400 font-sans mt-1">${key}</span>
+                            </button>
+                        `);
+                    });
+                </script>
+                <!-- Tombol Spesial -->
+                <button onclick="pressKey(' ')" class="col-span-6 bg-white rounded-lg p-3 text-sm font-bold shadow-sm border-b-4 border-stone-300 uppercase">Spasi</button>
+                <button onclick="pressBackspace()" class="col-span-4 bg-stone-400 text-white rounded-lg p-3 text-sm font-bold shadow-sm border-b-4 border-stone-500 uppercase">Hapus</button>
+            </div>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-stone-900 text-white px-6 py-3 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 shadow-2xl">
+            Teks disalin!
+        </div>
+    </div>
+
+    <script>
+        const inputArea = document.getElementById('input-text');
+        const outputArea = document.getElementById('output-text');
+        const keyboard = document.getElementById('majo-keyboard');
+        const inputLabel = document.getElementById('input-label');
+        const outputLabel = document.getElementById('output-label');
+        
+        const btnL2M = document.getElementById('mode-latin-to-majo');
+        const btnM2L = document.getElementById('mode-majo-to-latin');
+
+        let currentMode = 'L2M'; // L2M atau M2L
+
+        function setMode(mode) {
+            currentMode = mode;
+            clearAll();
+            
+            if (mode === 'L2M') {
+                // UI Update
+                btnL2M.classList.replace('bg-white', 'bg-stone-700');
+                btnL2M.classList.replace('text-stone-700', 'text-white');
+                btnM2L.classList.replace('bg-stone-700', 'bg-white');
+                btnM2L.classList.replace('text-white', 'text-stone-700');
+                
+                inputLabel.innerText = "Input Latin";
+                outputLabel.innerText = "Hasil Majo";
+                
+                inputArea.classList.remove('majo-font');
+                outputArea.classList.add('majo-font');
+                
+                keyboard.classList.add('hidden');
+                inputArea.readOnly = false;
+                inputArea.placeholder = "Ketik teks latin...";
+            } else {
+                // UI Update
+                btnM2L.classList.replace('bg-white', 'bg-stone-700');
+                btnM2L.classList.replace('text-stone-700', 'text-white');
+                btnL2M.classList.replace('bg-stone-700', 'bg-white');
+                btnL2M.classList.replace('text-white', 'text-stone-700');
+                
+                inputLabel.innerText = "Input Majo (Gunakan Keyboard Di Bawah)";
+                outputLabel.innerText = "Hasil Latin";
+                
+                inputArea.classList.add('majo-font');
+                outputArea.classList.remove('majo-font');
+                
+                keyboard.classList.remove('hidden');
+                inputArea.readOnly = true;
+                inputArea.placeholder = "Klik tombol pada keyboard Majo...";
+            }
+        }
+
+        // Sinkronisasi translasi
+        inputArea.addEventListener('input', () => {
+            updateTranslation();
+        });
+
+        function updateTranslation() {
+            const text = inputArea.value;
+            outputArea.innerText = text;
+        }
+
+        function pressKey(char) {
+            if (currentMode === 'M2L') {
+                inputArea.value += char;
+                updateTranslation();
+            }
+        }
+
+        function pressBackspace() {
+            if (currentMode === 'M2L') {
+                inputArea.value = inputArea.value.slice(0, -1);
+                updateTranslation();
+            }
+        }
+
+        function clearAll() {
+            inputArea.value = "";
+            outputArea.innerText = "";
+        }
+
+        function copyOutput() {
+            const text = outputArea.innerText;
+            if (!text) return;
+
+            const tempInput = document.createElement("textarea");
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            showToast();
+        }
+
+        function showToast() {
+            const toast = document.getElementById('toast');
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 2000);
+        }
+
+        // Inisialisasi default
+        window.onload = () => {
+            setMode('L2M');
+        };
+    </script>
+</body>
+</html>
