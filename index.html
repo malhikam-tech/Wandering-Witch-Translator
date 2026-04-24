@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wandering Witch Formal Alphabet Translator</title>
+    <title>Wandering Witch Translator & Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Memuat font custom dari file yang diunggah */
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;700&display=swap');
+
         @font-face {
             font-family: 'WanderingWitchFormal';
             src: url('WanderingWitchFormal-Regular.otf') format('opentype');
@@ -14,175 +16,271 @@
             font-style: normal;
         }
 
+        :root {
+            --parchment: #f4ece1;
+            --ink: #2c2420;
+            --magic-purple: #6b4e71;
+            --magic-gold: #c5a059;
+        }
+
+        body {
+            background-color: #1a1614;
+            color: var(--ink);
+            font-family: 'Crimson Pro', serif;
+        }
+
         .majo-font {
-            font-family: 'WanderingWitchFormal', cursive;
+            font-family: 'WanderingWitchFormal', serif;
+            line-height: 1.2;
+        }
+
+        .glass-panel {
+            background: rgba(244, 236, 225, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--magic-gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .title-font {
+            font-family: 'Cinzel', serif;
+            letter-spacing: 0.1em;
+        }
+
+        .btn-magic {
+            background: var(--magic-purple);
+            color: white;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-magic:hover {
+            background: #563d5a;
+            border-color: var(--magic-gold);
+            transform: translateY(-2px);
+        }
+
+        .alphabet-card {
+            transition: transform 0.2s;
+            border: 1px solid #ddd;
+        }
+
+        .alphabet-card:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            background: white;
+            border-color: var(--magic-gold);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: var(--magic-gold);
+            border-radius: 10px;
         }
 
         .keyboard-key {
-            transition: all 0.1s ease;
-            user-select: none;
+            font-family: 'Cinzel', serif;
+            transition: all 0.1s;
         }
-
         .keyboard-key:active {
-            transform: scale(0.9);
-            background-color: #4b5563;
+            transform: translateY(2px);
+            filter: brightness(0.8);
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .mode-active {
+            border-bottom: 3px solid var(--magic-purple);
+            color: var(--magic-purple);
+            font-weight: 700;
         }
     </style>
 </head>
-<body class="bg-stone-100 min-h-screen font-sans text-stone-800">
+<body class="p-4 md:p-8 custom-scrollbar">
 
-    <div class="max-w-4xl mx-auto p-4 sm:p-8">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl sm:text-4xl font-bold text-stone-700 mb-2">Wandering Witch Translator</h1>
-            <p class="text-stone-500 italic">Majo Alphabet - Latin Translator</p>
-        </header>
+    <!-- Header Section -->
+    <header class="max-w-6xl mx-auto text-center mb-12 text-white">
+        <h1 class="title-font text-4xl md:text-6xl mb-2 text-yellow-500">WANDERING WITCH</h1>
+        <p class="italic opacity-80">Formal Alphabet Translator & Archive</p>
+        <div class="h-1 w-24 bg-yellow-600 mx-auto mt-4"></div>
+    </header>
 
-        <!-- Mode Selector -->
-        <div class="flex justify-center mb-6 space-x-2">
-            <button id="mode-latin-to-majo" onclick="setMode('L2M')" class="px-4 py-2 rounded-full bg-stone-700 text-white shadow-md transition-all">Latin → Majo</button>
-            <button id="mode-majo-to-latin" onclick="setMode('M2L')" class="px-4 py-2 rounded-full bg-white text-stone-700 border border-stone-300 shadow-sm transition-all">Majo → Latin</button>
+    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Synopsis & Info -->
+        <div class="lg:col-span-4 space-y-8">
+            <section class="glass-panel p-6 rounded-lg">
+                <h2 class="title-font text-xl mb-4 flex items-center border-b border-stone-300 pb-2">
+                    <i class="fas fa-book-open mr-2 text-purple-700"></i> Synopsis
+                </h2>
+                <p class="text-sm leading-relaxed mb-4">
+                    Once upon a time, there was a witch named <strong>Elaina</strong>. Inspired by the stories of the traveler Nike, she embarked on a journey across the world with no fixed goal, experiencing various countries and meeting diverse people.
+                </p>
+                <p class="text-sm leading-relaxed italic opacity-75">
+                    "Please do not mind it. After all, I am a traveler. I must hurry."
+                </p>
+            </section>
+
+            <section class="glass-panel p-6 rounded-lg">
+                <h2 class="title-font text-xl mb-4 flex items-center border-b border-stone-300 pb-2">
+                    <i class="fas fa-info-circle mr-2 text-purple-700"></i> About the Alphabet
+                </h2>
+                <p class="text-sm leading-relaxed">
+                    The <strong>Majo Formal Alphabet</strong> is a fictional script used in the <i>Majo no Tabitabi</i> universe. It maps directly to the Latin alphabet (A-Z) and numerals (0-9). This tool allows you to encode and decode messages used in the series.
+                </p>
+            </section>
         </div>
 
-        <!-- Translation Area -->
-        <div class="grid grid-cols-1 gap-6">
+        <!-- Middle/Right: Translator -->
+        <div class="lg:col-span-8 space-y-6">
             
-            <!-- Input Card -->
-            <div class="bg-white rounded-2xl shadow-xl p-6 border border-stone-200">
-                <div class="flex justify-between items-center mb-2">
-                    <span id="input-label" class="text-sm font-semibold text-stone-400 uppercase tracking-widest">Input Latin</span>
-                    <button onclick="clearAll()" class="text-xs text-red-400 hover:text-red-600 transition-colors">Hapus Semua</button>
+            <!-- Translator UI -->
+            <div class="glass-panel rounded-lg overflow-hidden flex flex-col h-full">
+                <!-- Tabs -->
+                <div class="flex bg-stone-200/50 border-b border-stone-300">
+                    <button onclick="setMode('L2M')" id="tabL2M" class="flex-1 py-4 title-font text-sm mode-active">LATIN TO MAJO</button>
+                    <button onclick="setMode('M2L')" id="tabM2L" class="flex-1 py-4 title-font text-sm">MAJO TO LATIN</button>
                 </div>
-                <textarea id="input-text" 
-                          class="w-full h-32 p-4 text-xl border-none focus:ring-0 resize-none placeholder-stone-300 transition-all"
-                          placeholder="Ketik di sini..."></textarea>
-            </div>
 
-            <!-- Output Card -->
-            <div class="bg-stone-800 rounded-2xl shadow-xl p-6 text-white">
-                <div class="flex justify-between items-center mb-2">
-                    <span id="output-label" class="text-sm font-semibold text-stone-500 uppercase tracking-widest">Hasil Majo</span>
-                    <button onclick="copyOutput()" class="text-xs bg-stone-700 hover:bg-stone-600 px-3 py-1 rounded transition-colors">Salin</button>
+                <div class="p-6 space-y-4">
+                    <!-- Input Area -->
+                    <div>
+                        <label class="block text-xs font-bold uppercase opacity-60 mb-1" id="labelInput">English Text</label>
+                        <textarea id="inputArea" class="w-full h-32 p-4 bg-white/50 border border-stone-300 rounded focus:ring-2 focus:ring-purple-400 outline-none text-lg" placeholder="Type here..."></textarea>
+                    </div>
+
+                    <!-- Virtual Keyboard (Visible only in M2L) -->
+                    <div id="virtualKeyboard" class="hidden animate-fade-in">
+                        <div class="flex flex-wrap gap-1 justify-center bg-stone-800/10 p-4 rounded-lg">
+                            <!-- JS will populate keys -->
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-between items-center py-2">
+                        <button onclick="clearAll()" class="text-sm text-red-700 hover:underline"><i class="fas fa-trash-alt mr-1"></i> Clear All</button>
+                        <button onclick="copyOutput()" class="btn-magic px-6 py-2 rounded shadow-lg text-sm font-bold">
+                            <i class="fas fa-copy mr-2"></i> COPY TRANSLATION
+                        </button>
+                    </div>
+
+                    <!-- Output Area -->
+                    <div class="mt-4">
+                        <label class="block text-xs font-bold uppercase opacity-60 mb-1" id="labelOutput">Majo Script</label>
+                        <div id="outputArea" class="w-full min-h-[150px] p-6 bg-white border-2 border-dashed border-stone-300 rounded text-4xl majo-font break-all whitespace-pre-wrap"></div>
+                    </div>
                 </div>
-                <div id="output-text" class="w-full min-h-[128px] p-4 text-3xl break-words whitespace-pre-wrap"></div>
             </div>
-        </div>
 
-        <!-- Majo Virtual Keyboard (Hanya muncul di mode Majo -> Latin) -->
-        <div id="majo-keyboard" class="mt-8 bg-stone-200 p-4 rounded-3xl shadow-inner hidden">
-            <p class="text-center text-xs text-stone-500 mb-4 font-bold uppercase tracking-tighter">Majo Virtual Keyboard</p>
-            <div class="grid grid-cols-10 gap-2 max-w-2xl mx-auto">
-                <!-- Baris 1: Angka -->
-                <script>
-                    const keys = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM".split("");
-                    keys.forEach(key => {
-                        document.write(`
-                            <button onclick="pressKey('${key}')" class="keyboard-key majo-font bg-white rounded-lg p-2 sm:p-3 text-xl sm:text-2xl shadow-sm hover:shadow-md border-b-4 border-stone-300">
-                                ${key}
-                                <span class="block text-[8px] text-stone-400 font-sans mt-1">${key}</span>
-                            </button>
-                        `);
-                    });
-                </script>
-                <!-- Tombol Spesial -->
-                <button onclick="pressKey(' ')" class="col-span-6 bg-white rounded-lg p-3 text-sm font-bold shadow-sm border-b-4 border-stone-300 uppercase">Spasi</button>
-                <button onclick="pressBackspace()" class="col-span-4 bg-stone-400 text-white rounded-lg p-3 text-sm font-bold shadow-sm border-b-4 border-stone-500 uppercase">Hapus</button>
+            <!-- Alphabet Reference Table -->
+            <div class="glass-panel p-6 rounded-lg">
+                <h2 class="title-font text-xl mb-4 border-b border-stone-300 pb-2">Alphabet Reference</h2>
+                <div class="grid grid-cols-6 sm:grid-cols-9 gap-2" id="alphabetGrid">
+                    <!-- JS will populate table -->
+                </div>
             </div>
-        </div>
 
-        <!-- Notification Toast -->
-        <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-stone-900 text-white px-6 py-3 rounded-full opacity-0 pointer-events-none transition-opacity duration-300 shadow-2xl">
-            Teks disalin!
         </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-stone-900 text-white px-6 py-3 rounded-full opacity-0 transition-opacity pointer-events-none z-50 shadow-2xl border border-yellow-500">
+        Copied to clipboard!
     </div>
 
-    <script>
-        const inputArea = document.getElementById('input-text');
-        const outputArea = document.getElementById('output-text');
-        const keyboard = document.getElementById('majo-keyboard');
-        const inputLabel = document.getElementById('input-label');
-        const outputLabel = document.getElementById('output-label');
-        
-        const btnL2M = document.getElementById('mode-latin-to-majo');
-        const btnM2L = document.getElementById('mode-majo-to-latin');
+    <footer class="mt-12 text-center text-stone-500 text-sm pb-8">
+        <p>&copy; 2026 Majo no Tabitabi Fan Project. Font created by Calligraphr.</p>
+    </footer>
 
-        let currentMode = 'L2M'; // L2M atau M2L
+    <script>
+        const inputArea = document.getElementById('inputArea');
+        const outputArea = document.getElementById('outputArea');
+        const virtualKeyboard = document.getElementById('virtualKeyboard');
+        const keyboardContainer = virtualKeyboard.querySelector('div');
+        const alphabetGrid = document.getElementById('alphabetGrid');
+        
+        let currentMode = 'L2M'; // L2M or M2L
+        const chars = "1234567890QWERTYUIOPASDFGHJKLZXCVBNM".split('');
+
+        // Initialize App
+        function init() {
+            // Populate Alphabet Reference
+            const fullChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split('');
+            fullChars.forEach(char => {
+                const card = document.createElement('div');
+                card.className = 'alphabet-card bg-stone-50 p-2 text-center rounded flex flex-col items-center';
+                card.innerHTML = `
+                    <span class="text-[8px] font-bold text-stone-400 mb-1">${char}</span>
+                    <span class="majo-font text-2xl">${char}</span>
+                `;
+                alphabetGrid.appendChild(card);
+            });
+
+            // Populate Virtual Keyboard
+            chars.forEach(char => {
+                const btn = document.createElement('button');
+                btn.className = 'keyboard-key bg-white w-10 h-12 flex flex-col items-center justify-center rounded border border-stone-400 shadow-sm hover:bg-stone-100';
+                btn.innerHTML = `
+                    <span class="majo-font text-xl">${char}</span>
+                    <span class="text-[8px] text-stone-400 font-bold">${char}</span>
+                `;
+                btn.onclick = () => {
+                    inputArea.value += char;
+                    updateTranslation();
+                };
+                keyboardContainer.appendChild(btn);
+            });
+
+            // Add Backspace to Keyboard
+            const backBtn = document.createElement('button');
+            backBtn.className = 'keyboard-key bg-red-50 w-20 h-12 flex items-center justify-center rounded border border-red-200 text-red-700 font-bold text-xs';
+            backBtn.innerHTML = '<i class="fas fa-backspace"></i>';
+            backBtn.onclick = () => {
+                inputArea.value = inputArea.value.slice(0, -1);
+                updateTranslation();
+            };
+            keyboardContainer.appendChild(backBtn);
+        }
 
         function setMode(mode) {
             currentMode = mode;
-            clearAll();
             
+            // UI Updates
+            document.getElementById('tabL2M').className = `flex-1 py-4 title-font text-sm ${mode === 'L2M' ? 'mode-active' : ''}`;
+            document.getElementById('tabM2L').className = `flex-1 py-4 title-font text-sm ${mode === 'M2L' ? 'mode-active' : ''}`;
+            
+            const labelInput = document.getElementById('labelInput');
+            const labelOutput = document.getElementById('labelOutput');
+
             if (mode === 'L2M') {
-                // UI Update
-                btnL2M.classList.replace('bg-white', 'bg-stone-700');
-                btnL2M.classList.replace('text-stone-700', 'text-white');
-                btnM2L.classList.replace('bg-stone-700', 'bg-white');
-                btnM2L.classList.replace('text-white', 'text-stone-700');
-                
-                inputLabel.innerText = "Input Latin";
-                outputLabel.innerText = "Hasil Majo";
-                
+                labelInput.innerText = "English Text";
+                labelOutput.innerText = "Majo Script";
                 inputArea.classList.remove('majo-font');
                 outputArea.classList.add('majo-font');
-                
-                keyboard.classList.add('hidden');
+                virtualKeyboard.classList.add('hidden');
                 inputArea.readOnly = false;
-                inputArea.placeholder = "Ketik teks latin...";
             } else {
-                // UI Update
-                btnM2L.classList.replace('bg-white', 'bg-stone-700');
-                btnM2L.classList.replace('text-stone-700', 'text-white');
-                btnL2M.classList.replace('bg-stone-700', 'bg-white');
-                btnL2M.classList.replace('text-white', 'text-stone-700');
-                
-                inputLabel.innerText = "Input Majo (Gunakan Keyboard Di Bawah)";
-                outputLabel.innerText = "Hasil Latin";
-                
+                labelInput.innerText = "Majo Input (Click Keys Below)";
+                labelOutput.innerText = "Translated Text";
                 inputArea.classList.add('majo-font');
                 outputArea.classList.remove('majo-font');
-                
-                keyboard.classList.remove('hidden');
-                inputArea.readOnly = true;
-                inputArea.placeholder = "Klik tombol pada keyboard Majo...";
+                virtualKeyboard.classList.remove('hidden');
+                inputArea.readOnly = true; // Use virtual keyboard for accuracy
             }
+
+            clearAll();
         }
 
-        // Sinkronisasi translasi
         inputArea.addEventListener('input', () => {
             updateTranslation();
         });
 
         function updateTranslation() {
-            const text = inputArea.value;
-            outputArea.innerText = text;
-        }
-
-        function pressKey(char) {
-            if (currentMode === 'M2L') {
-                inputArea.value += char;
-                updateTranslation();
-            }
-        }
-
-        function pressBackspace() {
-            if (currentMode === 'M2L') {
-                inputArea.value = inputArea.value.slice(0, -1);
-                updateTranslation();
-            }
+            let text = inputArea.value;
+            // Always treat as uppercase for this font's mapping
+            outputArea.innerText = text.toUpperCase();
         }
 
         function clearAll() {
@@ -194,6 +292,7 @@
             const text = outputArea.innerText;
             if (!text) return;
 
+            // Use fallback for clipboard
             const tempInput = document.createElement("textarea");
             tempInput.value = text;
             document.body.appendChild(tempInput);
@@ -212,10 +311,7 @@
             }, 2000);
         }
 
-        // Inisialisasi default
-        window.onload = () => {
-            setMode('L2M');
-        };
+        window.onload = init;
     </script>
 </body>
 </html>
